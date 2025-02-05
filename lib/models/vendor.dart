@@ -22,10 +22,10 @@ class Vendor {
       'name': name,
       'type': type,
       'phone_number': phoneNumber,
-      'location': location,  // Include in map
+      'location': location,
     };
   }
-
+    
   factory Vendor.fromMap(Map<String, dynamic> map) {
     return Vendor(
       vendorId: map['vendor_id'],
@@ -33,7 +33,7 @@ class Vendor {
       name: map['name'],
       type: map['type'],
       phoneNumber: map['phone_number'],
-      location: map['location'],  // Retrieve location
+      location: map['location'],
     );
+    }
   }
-}

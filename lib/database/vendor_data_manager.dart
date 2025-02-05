@@ -2,6 +2,7 @@ import 'database_helper.dart';
 import '../models/vendor.dart';
 import '../models/phone.dart';
 import '../models/transaction.dart';
+import '../utils/logger.dart';
 
 class VendorDataManager {
   final DatabaseHelper _dbHelper = DatabaseHelper();
@@ -9,9 +10,10 @@ class VendorDataManager {
   Future<void> initializeVendors() async {
     // Check if vendors already exist
     final existingVendors = await _dbHelper.getAllVendors();
-    if (existingVendors.isEmpty) {
+    
       await addSampleVendors();
-    }
+ 
+    await _dbHelper.verifyVendorData(); 
   }
 
   Future<void> addSampleVendors() async {
@@ -44,7 +46,7 @@ class VendorDataManager {
         vendorId: 'V004',
         upiId: 'adityakharmale7@oksbi',
         name: 'SDK Shop',
-        type: 'big',
+        type: 'small',
         phoneNumber: '2233445566',
         location: 'San Francisco',
       ),
@@ -99,8 +101,10 @@ class VendorDataManager {
     ];
 
     for (var vendor in vendors) {
+      await Logger.log('Adding vendor: ${vendor.toString()}');
       await _dbHelper.insertVendor(vendor);
     }
+    await Logger.log('Sample vendors added successfully');
   }
 
 

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../database/database_helper.dart';
 import '../models/vendor.dart';
 import 'dart:async';
-
+import '../utils/logger.dart';
 class PaymentScreen extends StatefulWidget {
   final String qrData;
 
@@ -52,24 +52,34 @@ class _PaymentScreenState extends State<PaymentScreen> with SingleTickerProvider
   }
 
   Future<void> _checkVendor() async {
-    final upiUri = Uri.parse(widget.qrData);
-    final upiId = upiUri.queryParameters['pa'];
-    
-    // Store the receiver UPI id regardless of vendor lookup
-    setState(() {
-      _receiverUpiId = upiId;
-    });
-    
-    if (upiId != null) {
-      final vendor = await _dbHelper.getVendorByUpiId(upiId);
-      setState(() {
-        _vendor = vendor; // Will be null if not found
-        _isLoading = false;
-      });
-    } else {
+    try {
+      final upiUri = Uri.parse(widget.qrData);
+      final upiId = upiUri.queryParameters['pa'];
+      
+      if (upiId != null) {
+        final vendor = await _dbHelper.getVendorByUpiId(upiId);
+        
+        setState(() {
+          _receiverUpiId = upiId;
+          _vendor = vendor;
+          _isLoading = false;
+        });
+      } else {
+        setState(() {
+          _isLoading = false;
+          _receiverUpiId = null;
+        });
+      }
+    } catch (e) {
       setState(() => _isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error processing QR code: $e')),
+      );
     }
   }
+
+  
+
 
   void _calculateRewardPoints(double amount) {
     if (_vendor != null) {

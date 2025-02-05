@@ -32,6 +32,8 @@ Future<void> main() async {
     // Ensure Flutter bindings are initialized
     WidgetsFlutterBinding.ensureInitialized();
 final vendorManager = VendorDataManager();
+ final dbHelper = DatabaseHelper();
+ await dbHelper.clearVendors();
   await vendorManager.initializeVendors();
     // Set preferred orientations
     await SystemChrome.setPreferredOrientations([

@@ -97,6 +97,21 @@ class DatabaseHelper extends ChangeNotifier {
     return (result.first['total'] as int?) ?? 0;
   }
 
+
+  Future<void> clearVendors() async {
+    final Database db = await database;
+    await db.delete('vendors');
+  }
+  Future<void> updateVendorByUpiId(String upiId, Map<String, dynamic> updates) async {
+  final Database db = await database;
+  await db.update(
+  'vendors',
+  updates,
+  where: 'upi_id = ?',
+  whereArgs: [upiId],
+  );
+  notifyListeners();
+  }
   // Check if points were already added for a transaction
   Future<bool> hasPointsForTransaction(int transactionId) async {
     final Database db = await database;
@@ -243,16 +258,14 @@ class DatabaseHelper extends ChangeNotifier {
   // Get vendor by UPI ID
   Future<Vendor?> getVendorByUpiId(String upiId) async {
     final Database db = await database;
-    final List<Map<String, dynamic>> maps = await db.query(
-      'vendors',
-      where: 'upi_id = ?',
-      whereArgs: [upiId],
+    final List<Map<String, dynamic>> maps = await db.rawQuery(
+      'SELECT * FROM vendors WHERE upi_id = ?',
+      [upiId]
     );
 
     if (maps.isEmpty) return null;
     return Vendor.fromMap(maps.first);
   }
-
   // Get all phones
   Future<List<Phone>> getPhonesByUpiId(String upiId) async {
     final Database db = await database;
@@ -262,6 +275,15 @@ class DatabaseHelper extends ChangeNotifier {
 
     return List.generate(maps.length, (i) => Phone.fromMap(maps[i]));
   }
+
+  Future<void> verifyVendorData() async {
+  final Database db = await database;
+  final vendors = await db.query('vendors');
+  print('Total vendors in database: ${vendors.length}');
+  for (var vendor in vendors) {
+    print('Vendor: ${vendor['name']}, UPI: ${vendor['upi_id']}');
+  }
+}
 
   // Get all vendors
   Future<List<Vendor>> getAllVendors() async {
