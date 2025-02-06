@@ -45,8 +45,8 @@ class VendorDataManager {
       Vendor(
         vendorId: 'V004',
         upiId: 'adityakharmale7@oksbi',
-        name: 'SDK Shop',
-        type: 'small',
+        name: 'SDK1 Shop',
+        type: 'big',
         phoneNumber: '2233445566',
         location: 'San Francisco',
       ),

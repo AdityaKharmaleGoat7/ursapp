@@ -292,6 +292,18 @@ class DatabaseHelper extends ChangeNotifier {
     return List.generate(maps.length, (i) => Vendor.fromMap(maps[i]));
   }
 
+Future<void> updatePoints(int points) async {
+  final db = await database;
+  await db.insert(
+    'points_table',
+    {
+      'points': points,
+      'date': DateTime.now().toIso8601String(),
+    },
+    conflictAlgorithm: ConflictAlgorithm.replace,
+  );
+}
+
   // Update a vendor
   Future<int> updateVendor(Vendor vendor) async {
     final Database db = await database;
